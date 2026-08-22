@@ -15,17 +15,17 @@ def get_db():
     return conn
 
 
-@app.get("/health")
+@app.get("/api/health")
 def health():
     return {"status": "ok"}
 
 
-@app.get("/")
+@app.get("/api")
 def root():
     return {"message": "API is working"}
 
 
-@app.get("/items")
+@app.get("/api/items")
 def get_items():
     conn = get_db()
     cursor = conn.cursor()
@@ -35,7 +35,7 @@ def get_items():
     return items
 
 
-@app.post("/items/{name}")
+@app.post("/api/items/{name}")
 def add_item(name: str):
     conn = get_db()
     cursor = conn.cursor()
