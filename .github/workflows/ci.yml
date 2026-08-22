@@ -1,16 +1,15 @@
-name: CI/CD Pipeline
+name: CI Pipeline
 
 on:
   push:
     branches: [ "main" ]
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v3
 
       - name: Build Docker image
         run: docker build -t myapp:latest .
@@ -20,46 +19,15 @@ jobs:
     needs: build
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v3
 
       - name: Install Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v4
         with:
           python-version: "3.10"
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install -r app/requirements.txt
 
       - name: Run tests
-        run: pytest
-
-  push:
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push image
-        run: |
-          docker build -t ghcr.io/${{ github.repository }}/myapp:latest .
-          docker push ghcr.io/${{ github.repository }}/myapp:latest
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: push
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-
-      - name: Deploy with Docker Compose
-        run: |
-          docker compose pull
-          docker compose up -d
+        run: pytest app/test_app.py
