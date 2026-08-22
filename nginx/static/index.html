@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Full Stack Project</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h1>FastAPI + MySQL + Nginx</h1>
+
+    <button onclick="loadItems()">טען פריטים</button>
+
+    <h3>הוסף פריט חדש</h3>
+    <input id="itemName" placeholder="שם פריט">
+    <button onclick="addItem()">הוסף</button>
+
+    <h3>רשימת פריטים:</h3>
+    <ul id="itemsList"></ul>
+
+<script>
+function loadItems() {
+    fetch('/api/items')
+        .then(res => res.json())
+        .then(items => {
+            const list = document.getElementById('itemsList');
+            list.innerHTML = '';
+            items.forEach(i => {
+                const li = document.createElement('li');
+                li.textContent = `${i.id}: ${i.name}`;
+                list.appendChild(li);
+            });
+        });
+}
+
+function addItem() {
+    const name = document.getElementById('itemName').value;
+    fetch(`/api/items/${name}`, { method: 'POST' })
+        .then(() => loadItems());
+}
+</script>
+
+</body>
+</html>
